@@ -14,23 +14,54 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+# 👶 BabyMeal (MVP)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+> **"วันนี้ลูกควรกินอะไรดี?"**
+> BabyMeal คือเว็บแอปพลิเคชันช่วยพ่อแม่มือใหม่ค้นหาเมนูอาหารสำหรับลูกน้อยวัย 6 เดือน - 3 ขวบ พร้อมคำแนะนำด้านโภชนาการ
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## ✨ ฟีเจอร์ที่ใช้งานได้แล้ว (Completed Features)
 
-To learn more about Next.js, take a look at the following resources:
+### 1. 🏠 หน้าโฮม (Home)
+* แสดงข้อมูลโปรไฟล์ลูก (ชื่อ, อายุ)
+* **Daily Summary:** แนะนำเมนูมื้อหลักและของว่างประจำวัน
+* **Caution:** แจ้งเตือนอาหารที่ควรระวังในแต่ละช่วงวัย
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 2. 🍲 ค้นหาเมนูอาหาร (Menu Discovery)
+* รวบรวมเมนูอาหารเด็กแบ่งตามช่วงวัย (6-8 เดือน, 8-12 เดือน, 1 ปี+)
+* แสดงข้อมูลด้วย **Menu Cards** ที่สวยงาม บอกประเภทมื้อและวัยที่เหมาะสม
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 3. 📖 รายละเอียดเมนู (Recipe Detail)
+* แสดงภาพอาหารขนาดใหญ่สวยงาม
+* **วัตถุดิบ:** รายการสิ่งที่ต้องเตรียม
+* **วิธีทำ:** ขั้นตอนการทำทีละสเต็ป (Step-by-step)
+* **ประโยชน์:** Tags บอกประโยชน์ทางโภชนาการ
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🛠️ เทคโนโลยีที่ใช้ (Tech Stack)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+* **Framework:** Next.js 15 (App Router)
+* **Language:** TypeScript
+* **Styling:** Tailwind CSS (Custom Theme: Baby Soft Tones)
+* **Icons:** Lucide React
+* **Font:** Kanit (Google Fonts)
+
+---
+
+## 🚀 วิธีรันโปรเจกต์ (How to Run)
+
+1.  **ติดตั้ง dependencies:**
+    ```bash
+    npm install
+    ```
+
+2.  **รันเซิร์ฟเวอร์ (Development):**
+    ```bash
+    npm run dev
+    ```
+    เปิด Browser ไปที่ [http://localhost:3000](http://localhost:3000)
+
+---
+*Developed by Prakasit for BabyMeal Project*
