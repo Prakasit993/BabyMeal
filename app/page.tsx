@@ -2,8 +2,19 @@ import ChildProfileCard from '../src/components/home/ChildProfileCard';
 import TodaySummaryCards from '../src/components/home/TodaySummaryCards';
 import { ChefHat } from 'lucide-react';
 import Link from 'next/link';
+import { supabase } from '../lib/supabase'; // <-- เพิ่มบรรทัดนี้
 
-export default function Home() {
+export default async function Home() {
+  // --- โซนทดสอบ Supabase ---
+  const { data: menus, error } = await supabase.from('menus').select('*');
+  
+  if (error) {
+    console.error("❌ เชื่อมต่อ Supabase ไม่สำเร็จ:", error.message);
+  } else {
+    console.log("✅ เชื่อมต่อสำเร็จ! เจอเมนูจำนวน:", menus?.length);
+    console.log("ตัวอย่างข้อมูล:", menus);
+  }
+  // -------------------------
   return (
     <div className="pb-20">
       
