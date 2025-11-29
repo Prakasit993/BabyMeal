@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Kanit } from "next/font/google";
 import "./globals.css";
-// 1. นำเข้า Header ที่เพิ่งสร้าง
+// 1. นำเข้า Header และ Footer
 import MainHeader from "../src/components/layout/MainHeader";
+import Footer from "../src/components/layout/Footer"; // <-- เพิ่มบรรทัดนี้
 
 const kanit = Kanit({
   subsets: ["latin", "thai"],
@@ -23,13 +24,17 @@ export default function RootLayout({
   return (
     <html lang="th">
       <body className={`${kanit.className} antialiased bg-slate-50 text-slate-900`}>
-        {/* 2. วาง Header ไว้ด้านบนสุด */}
+        {/* ส่วน Header */}
         <MainHeader />
-        
-        {/* ส่วนเนื้อหาของแต่ละหน้าจะมาแทนที่ children */}
+
+        {/* ส่วนเนื้อหาหลัก (จะยืดเต็มจอด้วย min-h-screen) */}
         <main className="min-h-screen">
-            {children}
+          {children}
         </main>
+        
+        {/* 2. วาง Footer ไว้ตรงนี้ (ต่อจาก main) */}
+        <Footer /> 
+
       </body>
     </html>
   );
