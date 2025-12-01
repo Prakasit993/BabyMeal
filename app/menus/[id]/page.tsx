@@ -1,21 +1,55 @@
-// src/app/menus/[id]/page.tsx
-import { mockMenus } from '../../../src/data/menus';
+import { supabase } from '../../../src/lib/supabase'; // เรียกใช้ Supabase
 import { ChevronLeft, Clock, ChefHat, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
-// 1. เปลี่ยนเป็น async function และกำหนด Type ของ params เป็น Promise
+// Next.js 15: params ต้องเป็น Promise
 export default async function MenuDetailPage(props: { params: Promise<{ id: string }> }) {
   
-  // 2. ใช้ await เพื่อดึงค่า params ออกมา
+  // 1. รอรับค่า ID จาก URL
   const params = await props.params;
   
-  // 3. ใช้ params.id ที่ได้มาค้นหาเมนู
-  const menu = mockMenus.find((m) => m.id === params.id);
+  // 2. ดึงข้อมูลจาก Supabase ตาม ID ที่ส่งมา
+  const { data: menuData, error } = await supabase
+    .from('menus')
+    .select('*')
+    .eq('id', params.id)
+    .single(); // single() แปลว่าเอาแค่รายการเดียว
 
-  if (!menu) {
+  // ถ้าหาไม่เจอ หรือมี Error ให้ไปหน้า 404
+  if (error || !menuData) {
     notFound();
   }
+
+// 3. แปลงข้อมูล (แบบปลอดภัย - กันเว็บพัง)
+  
+  // ฟังก์ชันช่วยแปลงข้อมูลให้เป็น List เสมอ
+  const toArray = (data: any) => {
+    if (Array.isArray(data)) return data; // ถ้าเป็น List อยู่แล้ว ก็ใช้เลย
+    if (typeof data === 'string') {
+        // ถ้าเป็นข้อความ ให้ลองตัดคำด้วยลูกน้ำ หรือ JSON parse
+        try {
+            return JSON.parse(data);
+        } catch {
+            return data.split(',').map(s => s.trim());
+        }
+    }
+    return []; // ถ้าไม่มีข้อมูล ให้ส่ง List ว่างกลับไป
+  };
+
+  const menu = {
+    id: menuData.id.toString(),
+    name: menuData.name,
+    description: menuData.description,
+    ageRange: menuData.age_range,
+    mealType: menuData.meal_type,
+    imageUrl: menuData.image_url,
+    
+    // ใช้ฟังก์ชันช่วยแปลงตรงนี้
+    ingredients: toArray(menuData.ingredients),
+    instructions: toArray(menuData.instructions),
+    tags: toArray(menuData.tags)
+  };
 
   return (
     <div className="bg-white min-h-screen pb-20">
@@ -23,7 +57,7 @@ export default async function MenuDetailPage(props: { params: Promise<{ id: stri
       {/* ส่วนรูปภาพ Header */}
       <div className="relative h-72 md:h-96 w-full">
         <img 
-          src={menu.imageUrl} 
+          src={menu.imageUrl || "https://placehold.co/600x400?text=No+Image"} 
           alt={menu.name}
           className="w-full h-full object-cover"
         />
@@ -58,12 +92,13 @@ export default async function MenuDetailPage(props: { params: Promise<{ id: stri
           </p>
 
           <div className="grid md:grid-cols-2 gap-10">
+            {/* วัตถุดิบ */}
             <div>
               <h2 className="text-xl font-bold text-baby-text flex items-center gap-2 mb-4">
                 <ChefHat className="text-secondary" /> วัตถุดิบ
               </h2>
               <ul className="space-y-3 bg-baby-green/30 p-6 rounded-2xl">
-                {menu.ingredients.map((item, index) => (
+                {menu.ingredients.map((item: string, index: number) => (
                   <li key={index} className="flex items-start gap-3 text-gray-700">
                     <div className="mt-1.5 w-2 h-2 rounded-full bg-primary flex-shrink-0" />
                     <span>{item}</span>
@@ -72,12 +107,13 @@ export default async function MenuDetailPage(props: { params: Promise<{ id: stri
               </ul>
             </div>
 
+            {/* วิธีทำ */}
             <div>
               <h2 className="text-xl font-bold text-baby-text flex items-center gap-2 mb-4">
                 <Clock className="text-orange-400" /> วิธีทำ
               </h2>
               <div className="space-y-6">
-                {menu.instructions.map((step, index) => (
+                {menu.instructions.map((step: string, index: number) => (
                   <div key={index} className="flex gap-4 group">
                     <div className="flex-shrink-0 w-8 h-8 bg-baby-blue text-blue-600 rounded-full flex items-center justify-center font-bold text-sm group-hover:bg-blue-600 group-hover:text-white transition-colors">
                       {index + 1}
@@ -91,11 +127,12 @@ export default async function MenuDetailPage(props: { params: Promise<{ id: stri
             </div>
           </div>
 
-          {menu.tags && (
+          {/* Tags */}
+          {menu.tags && menu.tags.length > 0 && (
             <div className="mt-10 pt-6 border-t border-gray-100">
               <h3 className="text-sm font-bold text-gray-400 mb-3 uppercase tracking-wider">ประโยชน์ที่ได้รับ</h3>
               <div className="flex flex-wrap gap-2">
-                {menu.tags.map(tag => (
+                {menu.tags.map((tag: string) => (
                   <span key={tag} className="flex items-center gap-1 bg-gray-50 text-gray-600 px-3 py-1.5 rounded-lg text-sm font-medium border border-gray-200">
                     <CheckCircle2 className="w-3 h-3 text-green-500" /> {tag}
                   </span>

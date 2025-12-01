@@ -1,6 +1,6 @@
 // src/components/menu/MenuCard.tsx
 import { MenuItem } from '@/types';
-import { Clock, User, ChefHat, ArrowRight } from 'lucide-react';
+import { User, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
 interface MenuCardProps {
@@ -13,7 +13,6 @@ export default function MenuCard({ menu }: MenuCardProps) {
       
       {/* 1. ส่วนรูปภาพ */}
       <div className="relative h-48 overflow-hidden bg-gray-100">
-        {/* ใช้ img ธรรมดาไปก่อน เพื่อลดปัญหา Config domain ของ Next.js */}
         <img 
           src={menu.imageUrl || "https://placehold.co/600x400?text=No+Image"} 
           alt={menu.name}
@@ -47,15 +46,31 @@ export default function MenuCard({ menu }: MenuCardProps) {
           {menu.description}
         </p>
 
-        {/* 3. ส่วน Tags และ ปุ่ม */}
+        {/* 3. ส่วน Tags และ ปุ่ม (Footer) */}
         <div className="flex items-center justify-between mt-4 border-t border-gray-50 pt-3">
           <div className="flex gap-2 text-xs text-gray-400">
-             {/* แสดง Tag แรกเท่านั้นเพื่อความสวยงาม */}
-             {menu.tags?.[0] && (
-               <span className="bg-gray-100 px-2 py-1 rounded-md text-gray-500">
-                 #{menu.tags[0]}
-               </span>
-             )}
+             {(() => {
+               let firstTag = "";
+               if (Array.isArray(menu.tags) && menu.tags.length > 0) {
+                 firstTag = menu.tags[0];
+               } else if (typeof menu.tags === 'string') {
+                 try {
+                   const parsed = JSON.parse(menu.tags);
+                   if (Array.isArray(parsed) && parsed.length > 0) firstTag = parsed[0];
+                 } catch {
+                   firstTag = (menu.tags as string).replace(/[\[\]"]/g, '').split(',')[0];
+                 }
+               }
+
+               if (firstTag) {
+                 return (
+                   <span className="bg-gray-100 px-2 py-1 rounded-md text-gray-500">
+                     #{firstTag}
+                   </span>
+                 );
+               }
+               return null;
+             })()}
           </div>
           
           <Link 

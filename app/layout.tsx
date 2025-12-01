@@ -4,6 +4,8 @@ import "./globals.css";
 // 1. นำเข้า Header และ Footer
 import MainHeader from "../src/components/layout/MainHeader";
 import Footer from "../src/components/layout/Footer"; // <-- เพิ่มบรรทัดนี้
+import ChatWidget from "../src/components/layout/ChatWidget";
+
 
 const kanit = Kanit({
   subsets: ["latin", "thai"],
@@ -34,6 +36,7 @@ export default function RootLayout({
         
         {/* 2. วาง Footer ไว้ตรงนี้ (ต่อจาก main) */}
         <Footer /> 
+        <ChatWidget /> {/* <-- วางตรงนี้ */}
 
       </body>
     </html>
