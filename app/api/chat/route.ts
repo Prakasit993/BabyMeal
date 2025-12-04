@@ -1,11 +1,14 @@
 // app/api/chat/route.ts
 
-export async function POST(req: Request) {
-  try {
-    // 1) รับข้อความจาก frontend
-    const body = await req.json();
-    const message = body.message as string | undefined;
+import { NextRequest } from 'next/server';
 
+const N8N_WEBHOOK_URL = process.env.N8N_WEBHOOK_URL!;
+
+export async function POST(req: NextRequest) {
+  try {
+    const { message, sessionId } = await req.json();
+
+    // ตรวจสอบ message
     if (!message) {
       return new Response(
         JSON.stringify({ error: 'Missing "message" in request body' }),
@@ -16,9 +19,8 @@ export async function POST(req: Request) {
       );
     }
 
-    // 2) ส่งต่อไปที่ n8n Webhook
-    const n8nUrl = process.env.N8N_WEBHOOK_URL;
-    if (!n8nUrl) {
+    // ตรวจสอบ N8N_WEBHOOK_URL
+    if (!N8N_WEBHOOK_URL) {
       return new Response(
         JSON.stringify({ error: 'N8N_WEBHOOK_URL is not set' }),
         {
@@ -28,20 +30,19 @@ export async function POST(req: Request) {
       );
     }
 
-    const n8nRes = await fetch(n8nUrl, {
+    // ส่งไป n8n พร้อม sessionId
+    const res = await fetch(N8N_WEBHOOK_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message }),
+      body: JSON.stringify({ message, sessionId }),
     });
 
-    const text = await n8nRes.text();
-    console.log('[n8n raw response]', n8nRes.status, text);
+    const text = await res.text();
+    console.log('[n8n raw response]', res.status, text);
 
-    // 3) ส่ง body จาก n8n กลับไปให้ frontend ตรง ๆ
-    // (ใน n8n Respond to Webhook ต้องส่ง { "reply": "..." })
     return new Response(text, {
-      status: n8nRes.status,
-      headers: { 'Content-Type': 'application/json' },
+      status: res.status,
+      headers: { 'Content-Type': 'text/plain; charset=utf-8' },
     });
   } catch (err) {
     console.error('[api/chat] error', err);
