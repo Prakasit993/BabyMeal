@@ -9,6 +9,7 @@ import { User as SupabaseUser } from '@supabase/supabase-js';
 export default function MainHeader() {
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAuthChecked, setIsAuthChecked] = useState(false);
 
   // 2. เช็คว่าล็อกอินอยู่ไหม เมื่อเปิดเว็บ
   useEffect(() => {
@@ -16,12 +17,14 @@ export default function MainHeader() {
     const getUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       setUser(user);
+      setIsAuthChecked(true);
     };
     getUser();
 
     // ฟังเหตุการณ์ Login/Logout (เพื่อให้เปลี่ยนทันทีไม่ต้องรีเฟรช)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
+      setIsAuthChecked(true);
     });
 
     return () => subscription.unsubscribe();
@@ -62,30 +65,32 @@ export default function MainHeader() {
           </Link>
 
           {/* 3. เงื่อนไขการแสดงปุ่ม Login / Profile */}
-          {user ? (
-            // ถ้าล็อกอินแล้ว: แสดงรูปโปรไฟล์ + ปุ่ม Logout
-            <div className="flex items-center gap-3 ml-2">
-                <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden border border-gray-300">
-                    <img 
-                        src={user.user_metadata.avatar_url || "https://placehold.co/100x100?text=U"} 
-                        alt="User" 
-                        className="w-full h-full object-cover"
-                    />
-                </div>
-                <button 
-                    onClick={handleLogout}
-                    className="text-xs text-red-500 hover:underline"
-                >
-                    ออก
-                </button>
-            </div>
-          ) : (
-            // ถ้ายังไม่ล็อกอิน: แสดงปุ่มเข้าสู่ระบบ
-            <Link href="/login" className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-full font-medium hover:bg-primary-hover shadow-sm shadow-primary/20 transition-all">
-              <User className="w-4 h-4" />
-              <span>เข้าสู่ระบบ</span>
-            </Link>
-          )}
+          {isAuthChecked ? (
+            user ? (
+              // ถ้าล็อกอินแล้ว: แสดงรูปโปรไฟล์ + ปุ่ม Logout
+              <div className="flex items-center gap-3 ml-2">
+                  <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden border border-gray-300">
+                      <img 
+                          src={user.user_metadata?.avatar_url || "https://placehold.co/100x100?text=U"} 
+                          alt="User" 
+                          className="w-full h-full object-cover"
+                      />
+                  </div>
+                  <button 
+                      onClick={handleLogout}
+                      className="text-xs text-red-500 hover:underline"
+                  >
+                      ออก
+                  </button>
+              </div>
+            ) : (
+              // ถ้ายังไม่ล็อกอิน: แสดงปุ่มเข้าสู่ระบบ
+              <Link href="/login" className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-full font-medium hover:bg-primary-hover shadow-sm shadow-primary/20 transition-all">
+                <User className="w-4 h-4" />
+                <span>เข้าสู่ระบบ</span>
+              </Link>
+            )
+          ) : null}
 
           <button className="md:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors" onClick={() => setIsMenuOpen(!isMenuOpen)}>
             {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
