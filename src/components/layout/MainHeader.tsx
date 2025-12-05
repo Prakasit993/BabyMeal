@@ -1,13 +1,14 @@
 'use client'; // 1. ต้องเป็น Client Component
 
 import Link from 'next/link';
-import { Baby, Menu, Search, ShoppingBag, User } from 'lucide-react';
+import { Baby, Menu, Search, ShoppingBag, User, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase'; // เรียกใช้ Supabase
 import { User as SupabaseUser } from '@supabase/supabase-js';
 
 export default function MainHeader() {
   const [user, setUser] = useState<SupabaseUser | null>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // 2. เช็คว่าล็อกอินอยู่ไหม เมื่อเปิดเว็บ
   useEffect(() => {
@@ -86,12 +87,48 @@ export default function MainHeader() {
             </Link>
           )}
 
-          <button className="md:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-lg">
-            <Menu className="w-6 h-6" />
+          <button className="md:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
 
       </div>
+
+      {/* เมนูมือถือ */}
+      {isMenuOpen && (
+        <div className="md:hidden border-t border-baby-pink/50 bg-white/90 backdrop-blur-md">
+          <nav className="container mx-auto px-4 py-4 flex flex-col gap-4">
+            <Link 
+              href="/" 
+              className="text-gray-600 hover:text-primary font-medium transition-colors py-2"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              หน้าแรก
+            </Link>
+            <Link 
+              href="/menus" 
+              className="text-gray-600 hover:text-primary font-medium transition-colors py-2"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              ค้นหาเมนู
+            </Link>
+            <Link 
+              href="/faq" 
+              className="text-gray-600 hover:text-primary font-medium transition-colors py-2"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              ปัญหาที่พบบ่อย
+            </Link>
+            <Link 
+              href="/deals" 
+              className="text-secondary hover:text-primary font-medium transition-colors py-2 sm:hidden"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              ดีลเด็ด
+            </Link>
+          </nav>
+        </div>
+      )}
     </header>
   );
 }
