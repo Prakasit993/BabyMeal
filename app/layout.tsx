@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import { Kanit } from "next/font/google";
 import "./globals.css";
-// 1. นำเข้า Header และ Footer
 import MainHeader from "../src/components/layout/MainHeader";
-import Footer from "../src/components/layout/Footer"; // <-- เพิ่มบรรทัดนี้
 import ChatWidget from "../src/components/layout/ChatWidget";
 
 
@@ -24,20 +22,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="th">
-      <body className={`${kanit.className} antialiased bg-slate-50 text-slate-900`}>
-        {/* ส่วน Header */}
+    <html lang="th" suppressHydrationWarning>
+      <body className={`${kanit.className} bg-baby-blue/30`}>
+        {/* หัวเว็บ */}
         <MainHeader />
 
-        {/* ส่วนเนื้อหาหลัก (จะยืดเต็มจอด้วย min-h-screen) */}
-        <main className="min-h-screen">
-          {children}
-        </main>
-        
-        {/* 2. วาง Footer ไว้ตรงนี้ (ต่อจาก main) */}
-        <Footer /> 
-        <ChatWidget /> {/* <-- วางตรงนี้ */}
+        {children}
 
+        {/* 👇 ปุ่มแชทบอท ให้โผล่ทุกหน้า */}
+        <ChatWidget />
       </body>
     </html>
   );

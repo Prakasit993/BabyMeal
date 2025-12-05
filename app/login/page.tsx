@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '../../src/lib/supabase'; // ถ้า path ไม่ตรงค่อยเปลี่ยน
 import { Chrome, MessageCircle } from 'lucide-react';
 
+const LIFF_ID = process.env.NEXT_PUBLIC_LIFF_ID;
+
 export default function LoginPage() {
   const router = useRouter();
 
@@ -43,18 +45,15 @@ export default function LoginPage() {
     });
   };
 
-  // Login LINE (ผ่าน Auth0)
-  const handleLineLogin = async () => {
-    await supabase.auth.signInWithOAuth({
-      provider: 'auth0',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=/`,
-        scopes: 'openid email profile',
-        queryParams: {
-          connection: 'line',
-        },
-      },
-    });
+  // Login LINE (ผ่าน LIFF โดยตรง)
+  const handleLineLogin = () => {
+    if (!LIFF_ID) {
+      console.error('LIFF_ID is missing');
+      alert('ยังไม่ได้ตั้งค่า NEXT_PUBLIC_LIFF_ID ใน .env.local');
+      return;
+    }
+
+    window.location.href = `https://liff.line.me/${LIFF_ID}`;
   };
 
   return (
