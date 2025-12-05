@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <title>เข้าสู่ระบบ BabyMeal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+</head>
+<body>
+  <h1>แบบฟอร์มจองบริการ</h1>
+  <p id="user">กำลังโหลดข้อมูลโปรไฟล์...</p>
+
+  <script>
+    const LIFF_ID = '2008590114-mKkr1J1R'; // 👉 ใส่ LIFF ID จาก LINE Developers
+
+    async function main() {
+      try {
+        console.log('Initializing LIFF with ID:', LIFF_ID);
+        await liff.init({ liffId: LIFF_ID });
+
+        // ยังไม่ login → สั่ง login
+        if (!liff.isLoggedIn()) {
+          console.log('Not logged in, redirecting to login...');
+          liff.login();
+          return; // รอกลับจาก login ก่อน
+        }
+
+        const profile = await liff.getProfile();
+        console.log('LIFF profile:', profile);
+
+        document.getElementById('user').textContent =
+          'สวัสดี ' + profile.displayName;
+      } catch (err) {
+        console.error('LIFF error:', err);
+        document.getElementById('user').textContent =
+          'เกิดข้อผิดพลาด: ' + (err?.message || String(err));
+      }
+    }
+
+    main();
+  </script>
+</body>
+</html>
