@@ -113,7 +113,7 @@ npm run dev
 # หรือ pnpm dev → http://localhost:3000
 
 # 2. เปิด tunnel
-cloudflared tunnel --url http://localhost:3000
+cloudflared tunnel --url http://localhost:3000 ***
 
 จะได้ URL ประเภท
 https://xxxx-xxxxx-xxxxx.trycloudflare.com
@@ -164,7 +164,7 @@ Production (แผน)
 *   **Trigger:** Webhook จาก Chat Widget
 *   **Flow:**
     1.  รับข้อความ + Context (ข้อมูลลูก/ประเภทคำถาม)
-    2.  ส่ง Prompt ไปยัง **Gemini 1.5 Flash**
+    2.  ส่ง Prompt ไปยัง **GPT 4 Turbo**
     3.  จัด Format คำตอบให้อ่านง่ายสำหรับผู้ปกครอง
     4.  ส่งคำตอบกลับไปแสดงผลที่หน้า Chat
 
@@ -181,7 +181,7 @@ Production (แผน)
 
 ### 🚧 Phase 2 – Automation & AI (~70%)
 *   [x] Google Sheets Sync → Supabase
-*   [x] AI Chatbot (Gemini Integration)
+*   [x] AI Chatbot (ChatGPT Integration)
 *   [x] LINE LIFF Integration
 *   [ ] **AI Image Generation:** ให้ n8n + AI สร้างรูปเมนูอาหารอัตโนมัติ (ปัจจุบันใช้ Manual Link)
 *   [ ] **LINE Notify:** แจ้งเตือนเมนูแนะนำประจำวันเข้ามือถือ
