@@ -13,21 +13,29 @@ export default function MainHeader() {
 
   // 2. เช็คว่าล็อกอินอยู่ไหม เมื่อเปิดเว็บ
   useEffect(() => {
-    // ดึงข้อมูล User ปัจจุบัน
-    const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
-      setIsAuthChecked(true);
+    // ดึงสถานะ session/ผู้ใช้จาก Supabase (ใช้ getSession เพื่ออ่านจากระบบจริง)
+    const fetchSession = async () => {
+      try {
+        const { data } = await supabase.auth.getSession();
+        // session?.user มีค่าถ้าล็อกอินอยู่
+        setUser(data?.session?.user ?? null);
+      } catch (err) {
+        setUser(null);
+      } finally {
+        setIsAuthChecked(true);
+      }
     };
-    getUser();
+    fetchSession();
 
-    // ฟังเหตุการณ์ Login/Logout (เพื่อให้เปลี่ยนทันทีไม่ต้องรีเฟรช)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    // ฟังเหตุการณ์ Login/Logout (เพื่อให้ UI เปลี่ยนทันทีไม่ต้องรีเฟรช)
+    const authListener = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
       setIsAuthChecked(true);
     });
 
-    return () => subscription.unsubscribe();
+    // ทำความสะอาดเมื่อ component ถูกยกเลิก
+    const subscription = authListener?.data?.subscription;
+    return () => subscription?.unsubscribe?.();
   }, []);
 
   // ฟังก์ชัน Logout
